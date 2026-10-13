@@ -1,0 +1,194 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Girasol LPC1769</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: una columna de lectura, diagrama del lazo arriba, tarjetas solo para el reparto de trabajo */
+  :root {
+    --bg: #FAFBF6;
+    --surface: #F0F2E8;
+    --fg: #1E2318;
+    --muted: #5B6350;
+    --line: #D4D9C6;
+    --sun: #C98F00;
+    --sun-soft: #F6E3A6;
+    --leaf: #2E6B3B;
+    --leaf-soft: #DCEBDD;
+    --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    --font-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #13160F; --surface: #1D2117; --fg: #E9ECE0; --muted: #A3AB95; --line: #343A2A;
+      --sun: #F2C12E; --sun-soft: #3A3012; --leaf: #7CC28A; --leaf-soft: #1F3324;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #13160F; --surface: #1D2117; --fg: #E9ECE0; --muted: #A3AB95; --line: #343A2A;
+    --sun: #F2C12E; --sun-soft: #3A3012; --leaf: #7CC28A; --leaf-soft: #1F3324;
+    color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 17px; line-height: 1.6; }
+  .wrap { max-width: 760px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 64px; display: flex; flex-direction: column; gap: 40px; }
+  h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(2rem, 6vw, 2.9rem); font-weight: 700; }
+  h2 { font-size: 1.45rem; font-weight: 700; }
+  h3 { font-size: 1.1rem; font-weight: 500; }
+  p { margin: 0; }
+  section { display: flex; flex-direction: column; gap: 14px; }
+  .eyebrow { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--leaf); }
+  .lead { font-size: 1.2rem; color: var(--fg); max-width: 62ch; }
+  .muted { color: var(--muted); }
+  code { font-family: var(--font-mono); font-size: 0.88em; background: var(--surface); padding: 1px 5px; border-radius: 4px; }
+  .figure { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 12px; }
+  .figure svg { display: block; width: 100%; min-width: 560px; height: auto; }
+  .figure .box { fill: var(--bg); stroke: var(--line); }
+  .figure .box-sun { fill: var(--sun-soft); stroke: var(--sun); }
+  .figure .box-leaf { fill: var(--leaf-soft); stroke: var(--leaf); }
+  .figure .t { fill: var(--fg); font-family: var(--font-body); font-size: 14px; font-weight: 600; }
+  .figure .s { fill: var(--muted); font-family: var(--font-body); font-size: 12px; }
+  .figure .arr { stroke: var(--muted); stroke-width: 1.5; fill: none; }
+  .figure .loop { stroke: var(--leaf); stroke-width: 1.8; fill: none; stroke-dasharray: 5 4; }
+  .figure .head { fill: var(--muted); }
+  .figure .head-leaf { fill: var(--leaf); }
+  .figure .cap { fill: var(--leaf); font-family: var(--font-body); font-size: 13px; font-weight: 600; }
+  ol.steps { list-style: none; counter-reset: paso; margin: 0; padding: 0; display: grid; gap: 12px; }
+  ol.steps li { counter-increment: paso; display: grid; grid-template-columns: 2.2rem 1fr; gap: 12px; align-items: start; }
+  ol.steps li::before { content: counter(paso); font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; width: 2.2rem; height: 2.2rem; border-radius: 50%; background: var(--sun-soft); color: var(--fg); display: grid; place-items: center; }
+  ol.steps li > div { min-width: 0; padding-top: 4px; }
+  ul.plain { margin: 0; padding-left: 1.2rem; display: grid; gap: 6px; }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.97rem; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  td:first-child { font-weight: 600; white-space: nowrap; }
+  .split { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .card { border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .card h3 { color: var(--leaf); }
+  .note { border-left: 3px solid var(--sun); padding: 4px 0 4px 14px; border-radius: 0; }
+  footer { font-size: 0.9rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; }
+</style>
+
+<main class="wrap">
+  <header style="display:flex;flex-direction:column;gap:12px">
+    <span class="eyebrow">TP final · Electrónica Digital III · LPC1769</span>
+    <h1>Girasol electrónico</h1>
+    <p class="lead">Un servo gira una "cabeza" con dos sensores de luz (LDR) separados por una pared de cartón. Si movés una linterna, la cabeza la sigue, como un girasol.</p>
+  </header>
+
+  <section aria-labelledby="lazo">
+    <h2 id="lazo">Cómo funciona</h2>
+    <div class="figure" role="img" aria-label="Lazo: la linterna ilumina los dos LDR, el ADC con DMA los mide, el micro compara izquierda contra derecha, el PWM mueve el servo y el servo gira los LDR, que vuelven a medir.">
+      <svg viewBox="0 0 680 190" xmlns="http://www.w3.org/2000/svg">
+        <rect class="box-sun" x="21" y="40" width="110" height="58" rx="8"/>
+        <text class="t" x="76" y="64" text-anchor="middle">Linterna</text>
+        <text class="s" x="76" y="83" text-anchor="middle">la luz</text>
+        <rect class="box-leaf" x="153" y="40" width="110" height="58" rx="8"/>
+        <text class="t" x="208" y="64" text-anchor="middle">2 LDR + pared</text>
+        <text class="s" x="208" y="83" text-anchor="middle">miden la luz</text>
+        <rect class="box" x="285" y="40" width="110" height="58" rx="8"/>
+        <text class="t" x="340" y="64" text-anchor="middle">ADC + DMA</text>
+        <text class="s" x="340" y="83" text-anchor="middle">muestrean</text>
+        <rect class="box" x="417" y="40" width="110" height="58" rx="8"/>
+        <text class="t" x="472" y="64" text-anchor="middle">izq − der</text>
+        <text class="s" x="472" y="83" text-anchor="middle">compara</text>
+        <rect class="box-leaf" x="549" y="40" width="110" height="58" rx="8"/>
+        <text class="t" x="604" y="64" text-anchor="middle">PWM → servo</text>
+        <text class="s" x="604" y="83" text-anchor="middle">gira un paso</text>
+        <path class="arr" d="M131 69 H147"/><path class="head" d="M151 69 l-7 -4 v8 z"/>
+        <path class="arr" d="M263 69 H279"/><path class="head" d="M283 69 l-7 -4 v8 z"/>
+        <path class="arr" d="M395 69 H411"/><path class="head" d="M415 69 l-7 -4 v8 z"/>
+        <path class="arr" d="M527 69 H543"/><path class="head" d="M547 69 l-7 -4 v8 z"/>
+        <path class="loop" d="M604 98 V148 H208 V108"/><path class="head-leaf" d="M208 102 l-4 8 h8 z"/>
+        <text class="cap" x="406" y="172" text-anchor="middle">el servo gira los LDR y cambia lo que miden: eso es la realimentación</text>
+      </svg>
+    </div>
+    <ol class="steps">
+      <li><div><strong>Medir.</strong> El ADC lee los dos LDR y el DMA guarda las muestras en memoria sin ocupar a la CPU.</div></li>
+      <li><div><strong>Comparar.</strong> Si la luz viene de la izquierda, la pared le hace sombra al LDR derecho, así que el izquierdo mide más.</div></li>
+      <li><div><strong>Corregir un pasito.</strong> El micro agranda o achica el pulso del servo unos microsegundos y el servo gira hacia la luz. Cuando los dos LDR miden lo mismo, apunta a la linterna y se queda quieto.</div></li>
+    </ol>
+    <p class="muted">Esto se repite 50 veces por segundo, por eso el movimiento se ve continuo. No hay PID: es "si la izquierda ve más, girá un poquito a la izquierda".</p>
+  </section>
+
+  <section aria-labelledby="servo">
+    <h2 id="servo">El servo, en dos líneas</h2>
+    <p>Recibe un pulso cada 20 ms y el ancho del pulso fija el ángulo. Con el PWM configurado para que cada cuenta dure 1 µs (<code>PR = 24</code>, <code>MR0 = 20000</code>), los números quedan directos: <code>MR1 = 1000</code> es un extremo, <code>1500</code> es el centro (90°) y <code>2000</code> es el otro extremo.</p>
+  </section>
+
+  <section aria-labelledby="perif">
+    <h2 id="perif">Qué hace cada periférico</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Periférico</th><th>Uso</th></tr></thead>
+        <tbody>
+          <tr><td>ADC</td><td>Lee los dos LDR en modo burst (recorre los canales solo).</td></tr>
+          <tr><td>DMA</td><td>Pasa las muestras del ADC a memoria y las tramas a la UART.</td></tr>
+          <tr><td>Timer0</td><td>Interrumpe cada 20 ms para correr el control.</td></tr>
+          <tr><td>PWM</td><td>Genera el pulso del servo.</td></tr>
+          <tr><td>DAC</td><td>Monitor para el osciloscopio: saca el error como tensión (1,65 V = error cero). Al arrancar hace un autotest: genera tensiones conocidas que el ADC verifica por un cable.</td></tr>
+          <tr><td>UART</td><td>Manda los datos a una página web que dibuja el girasol en vivo.</td></tr>
+          <tr><td>EINT y GPIO</td><td>Botones: automático/manual, barrido, girar a mano.</td></tr>
+          <tr><td>SysTick</td><td>Base de tiempo de 1 ms y antirrebote.</td></tr>
+          <tr><td>Sleep</td><td>La CPU duerme cuando no tiene nada que hacer.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="demo">
+    <h2 id="demo">La demo</h2>
+    <ul class="plain">
+      <li>Movés la linterna y el girasol la sigue.</li>
+      <li>Modo manual contra automático: en manual se queda quieto aunque la luz se vaya; en automático la busca.</li>
+      <li>Barrido: recorre de punta a punta, la web dibuja un "radar" de luz y se queda donde hay más.</li>
+      <li>Osciloscopio en la salida del DAC: se ve cómo el error salta y vuelve a cero cuando movés la linterna.</li>
+      <li>Autotest: sacás el cable del DAC, reiniciás y la placa avisa que falló.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="compras">
+    <h2 id="compras">Qué hay que comprar</h2>
+    <p>Servo SG90, 3 LDR, resistencias de 10 kΩ, una mini protoboard, una fuente de 5 V capaz de entregar la corriente pico del servo (MB102 solo si cumple), un capacitor de 470 µF, 4 pulsadores, cables dupont y un adaptador USB-UART CP2102. Se eligen y verifican tensiones y niveles de señal antes de comprar.</p>
+  </section>
+
+  <section aria-labelledby="primero">
+    <h2 id="primero">Primera prueba física, después del software</h2>
+    <ol class="steps">
+      <li><div><strong>LDR, sin programar.</strong> Dos LDR con su resistencia en la protoboard y la pared de cartón en el medio. Con el multímetro, uno tiene que subir y el otro bajar cuando movés la linterna.</div></li>
+      <li><div><strong>Servo.</strong> Probar <code>MR1</code> en 1000, 1500 y 2000: el brazo tiene que ir a tres posiciones distintas.</div></li>
+    </ol>
+    <p class="muted">Estas mediciones forman parte de la puesta en marcha, después de elegir la fuente y comprobar tensiones, corriente disponible y pines.</p>
+  </section>
+
+  <section aria-labelledby="reparto">
+    <h2 id="reparto">Cómo nos repartimos</h2>
+    <div class="split">
+      <div class="card">
+        <h3>Persona A</h3>
+        <p>Proyecto base, ADC con DMA, botones y Timer0, control del girasol y Sleep.</p>
+      </div>
+      <div class="card">
+        <h3>Persona B</h3>
+        <p>Servo (PWM), DAC (monitor y autotest), UART y la página web. La web se puede empezar con datos simulados, sin placa.</p>
+      </div>
+    </div>
+    <p><strong>Orden:</strong> primero firmware y web con datos simulados; después selección de componentes y conexionado; por último montaje, mediciones y defensa. El detalle de los issues está en <code>PLAN_ISSUES.md</code>.</p>
+  </section>
+
+  <section aria-labelledby="cuidado">
+    <h2 id="cuidado">Dónde hay que tener cuidado</h2>
+    <ul class="plain">
+      <li>El servo va con su propia fuente de 5 V, dimensionada para su corriente pico; si comparte la de la placa, la puede resetear.</li>
+      <li>Los dos LDR nunca son idénticos: hay que medir la diferencia con la misma luz y restarla en el código.</li>
+      <li>Hay que verificar en la placa que el DMA lea bien los dos canales del ADC. Si no, hay un plan B con interrupciones.</li>
+    </ul>
+  </section>
+
+  <footer>Los detalles técnicos están en <code>README_TP_FINAL_girasol.md</code> y el plan de tareas en <code>PLAN_ISSUES.md</code>.</footer>
+</main>
+
+</body></html>
