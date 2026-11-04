@@ -1,5 +1,8 @@
 # Prerequisites
 *.d
+*.p1
+Debug/
+Release/
 
 # Object files
 *.o
