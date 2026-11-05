@@ -14,7 +14,7 @@
  *   P0.2 / P0.3 (J6-21/22) TXD0 / RXD0  serial (adaptador USB-TTL de 3,3 V)
  *
  * Recursos con dueño único:
- *   DAC + su contador, canal DMA 0  -> excitation
+ *   DAC + su contador, canal DMA 0  -> excitation (o simulator si MODO_SIMULADOR = 1)
  *   Timer0 (MAT0.1), ADC, canal DMA 1 -> sampling
  *   SysTick                          -> timebase
  *   DMA_IRQHandler, SysTick_Handler  -> irq_dispatch.c (un solo handler por interrupción)
@@ -26,6 +26,11 @@
 #include "LPC17xx.h"
 #include "lpc17xx_gpdma.h"
 #include "lpc17xx_gpio.h"
+
+/* Modo simulador: 1 = el DAC saca una rampa lenta en lugar del seno, para probar muestreo y
+ * calibración sin las bobinas (cable de J6-18 a J6-15). 0 = funcionamiento normal con el seno
+ * de excitación hacia el amplificador del primario. */
+#define MODO_SIMULADOR 1
 
 /* LED de la placa */
 #define LED_PUERTO  PORT_0
